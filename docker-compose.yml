@@ -1,27 +1,38 @@
-version: '3.4'
+version: "3"
 
 services:
   samba:
-    image: dperson/samba
-    environment:
-      TZ: 'EST5EDT'
+    build: .
     networks:
       - default
+    container_name: share
+    environment:
+      TZ: 'Europe/Brussels'
+#      SMB: 1
+      NMBD: 1
+      USERID: 911 # if sharing your docker volume between multiple containers/host make sure you set the same id, if using standalone it does not matter
+      GROUPID: 911 # same here
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "137:137/udp"
       - "138:138/udp"
       - "139:139/tcp"
       - "445:445/tcp"
-    read_only: true
-    tmpfs:
-      - /tmp
     restart: unless-stopped
     stdin_open: true
     tty: true
     volumes:
-      - /mnt:/mnt:z
-      - /mnt2:/mnt2:z
-    command: '-s "Mount;/mnt" -s "Bobs Volume;/mnt2;yes;no;no;bob" -u "bob;bobspasswd" -p'
+      - ps2games:/ps2:z
+    command: '-s "PS2SMB;/ps2;yes;no;yes;all;none;;Downloads" -u "ps2;ps2" -p'
 
 networks:
   default:
+
+
+volumes:
+  ps2games:
+#    external: true # can be defined in another compose file
+#    name: your_external_container
+

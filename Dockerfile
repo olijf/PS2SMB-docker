@@ -3,7 +3,7 @@ MAINTAINER David Personette <dperson@gmail.com>
 
 # Install samba
 RUN apk --no-cache --no-progress upgrade && \
-    apk --no-cache --no-progress add bash samba shadow tini tzdata && \
+    apk --no-cache --no-progress add curl bash samba shadow tini tzdata && \
     addgroup -S smb && \
     adduser -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser &&\
     file="/etc/samba/smb.conf" && \
@@ -40,12 +40,11 @@ RUN apk --no-cache --no-progress upgrade && \
     echo '   recycle:versions = yes' >>$file && \
     echo '' >>$file && \
     echo '   # Security' >>$file && \
-    echo '   client ipc max protocol = SMB3' >>$file && \
-    echo '   client ipc min protocol = SMB2_10' >>$file && \
-    echo '   client max protocol = SMB3' >>$file && \
-    echo '   client min protocol = SMB2_10' >>$file && \
+    echo '   client max protocol = NT1' >>$file && \
+    echo '   client min protocol = CORE' >>$file && \
     echo '   server max protocol = SMB3' >>$file && \
-    echo '   server min protocol = SMB2_10' >>$file && \
+    echo '   server min protocol = LANMAN1' >>$file && \
+    echo '   ntlm auth = ntlmv1-permitted' >>$file && \
     echo '' >>$file && \
     echo '   # Time Machine' >>$file && \
     echo '   fruit:delete_empty_adfiles = yes' >>$file && \
